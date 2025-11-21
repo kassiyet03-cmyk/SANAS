@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:chkz.kz)",
+      "Bash(pip install:*)",
+      "Bash(django-admin startproject:*)",
+      "Bash(python manage.py startapp:*)",
+      "Bash(copy:*)",
+      "Bash(python manage.py migrate:*)",
+      "Bash(python manage.py check:*)",
+      "Bash(python manage.py:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.title }} - SANAS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <!-- Top Header Bar -->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-content">
+                    <div class="header-contact">
+                        <a href="tel:+77012345678">📞 +7 (701) 234-56-78</a>
+                        <a href="mailto:info@sanas.kz">✉ info@sanas.kz</a>
+                    </div>
+                    <div class="header-links">
+                        <span>Доставка по всей Республике Казахстан</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="{% url 'index' %}"><h1>SANAS<span>.</span></h1></a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul>
+                        <li><a href="{% url 'index' %}#home">Главная</a></li>
+                        <li><a href="{% url 'index' %}#products">Продукция</a></li>
+                        <li><a href="{% url 'index' %}#features">Преимущества</a></li>
+                        <li><a href="{% url 'index' %}#contact">Контакты</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <section class="breadcrumbs">
+        <div class="container">
+            <a href="{% url 'index' %}">Главная</a>
+            <span>/</span>
+            <a href="{% url 'index' %}#products">Продукция</a>
+            {% if item.category %}
+            <span>/</span>
+            <span>{{ item.category.name }}</span>
+            {% endif %}
+            <span>/</span>
+            <span class="current">{{ item.title }}</span>
+        </div>
+    </section>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="product-detail-grid">
+                <!-- Product Images -->
+                <div class="product-images">
+                    <div class="main-image">
+                        {% if item.main_image %}
+                        <img src="{{ item.main_image.url }}" alt="{{ item.title }}" id="mainImage">
+                        {% else %}
+                        <img src="https://via.placeholder.com/600x450/2c5f8d/ffffff?text={{ item.title|urlencode }}" alt="{{ item.title }}" id="mainImage">
+                        {% endif %}
+                    </div>
+                    {% if item.images.all %}
+                    <div class="image-thumbnails">
+                        <img src="{{ item.main_image.url }}" alt="{{ item.title }}" class="thumbnail active" onclick="changeImage(this)">
+                        {% for image in item.images.all %}
+                        <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="thumbnail" onclick="changeImage(this)">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-detail-info">
+                    {% if item.category %}
+                    <div class="product-category-badge">{{ item.category.name }}</div>
+                    {% endif %}
+
+                    <h1 class="product-detail-title">{{ item.title }}</h1>
+
+                    {% if item.short_description %}
+                    <p class="product-detail-short">{{ item.short_description }}</p>
+                    {% endif %}
+
+                    {% if item.price %}
+                    <div class="product-detail-price">
+                        <span class="price-label">Цена:</span>
+                        <span class="price-value">{{ item.price }} тг</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="product-actions">
+                        <a href="{% url 'index' %}#contact" class="btn btn-primary">Получить консультацию</a>
+                        <a href="{% url 'index' %}#products" class="btn btn-outline">Вернуться к каталогу</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Description -->
+            <div class="product-description-section">
+                <h2>Описание</h2>
+                <div class="product-description-content">
+                    {{ item.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            {% if related_items %}
+            <div class="related-products">
+                <h2>Похожие товары</h2>
+                <div class="products-grid">
+                    {% for related_item in related_items %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            {% if related_item.main_image %}
+                            <img src="{{ related_item.main_image.url }}" alt="{{ related_item.title }}">
+                            {% else %}
+                            <img src="https://via.placeholder.com/400x300/2c5f8d/ffffff?text={{ related_item.title|urlencode }}" alt="{{ related_item.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h4>{{ related_item.title }}</h4>
+                            {% if related_item.short_description %}
+                            <p class="product-description">{{ related_item.short_description }}</p>
+                            {% endif %}
+                            {% if related_item.price %}
+                            <p class="product-price">Цена: {{ related_item.price }} тг</p>
+                            {% endif %}
+                            <a href="{% url 'product_detail' related_item.slug %}" class="btn btn-secondary">Детали</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>О компании SANAS</h4>
+                    <p>Ведущий поставщик модульных компрессорных станций в Казахстане. Мы предлагаем современное оборудование для промышленного производства с гарантией качества и надежности.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Контактная информация</h4>
+                    <p><strong>Телефон:</strong> +7 (701) 234-56-78</p>
+                    <p><strong>Email:</strong> info@sanas.kz</p>
+                    <p><strong>Адрес:</strong> г. Алматы, ул. Промышленная, 45</p>
+                    <p><strong>Режим работы:</strong><br>Пн-Пт: 9:00 - 18:00<br>Сб: 10:00 - 14:00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SANAS - Модульные компрессорные станции. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Image gallery functionality
+        function changeImage(thumbnail) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = thumbnail.src;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnail.classList.add('active');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const nav = document.getElementById('nav');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                nav.classList.toggle('active');
+                mobileMenuToggle.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+</html>
