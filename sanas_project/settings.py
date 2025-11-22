@@ -55,7 +55,7 @@ ROOT_URLCONF = 'sanas_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'website' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
