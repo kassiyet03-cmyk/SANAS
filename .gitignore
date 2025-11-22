@@ -48,7 +48,3 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-# Old files (from original static site)
-index.html
-style.css
-script.js
