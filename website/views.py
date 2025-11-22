@@ -266,7 +266,10 @@ def panel_categories(request):
             name = request.POST.get('name')
             slug = transliterate(name)
             description = request.POST.get('description', '')
-            Category.objects.create(name=name, slug=slug, description=description)
+            category = Category.objects.create(name=name, slug=slug, description=description)
+            if 'image' in request.FILES:
+                category.image = request.FILES['image']
+                category.save()
             messages.success(request, f'Категория "{name}" добавлена!')
 
         elif action == 'delete':

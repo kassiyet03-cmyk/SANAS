@@ -71,7 +71,12 @@
             {% for category in categories %}
             {% with category_items=category.items.all|dictsort:"order" %}
             {% if category_items %}
-            <div class="category-section">
+            <div class="category-section" id="category-{{ category.slug }}">
+                {% if category.image %}
+                <div class="category-banner">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                </div>
+                {% endif %}
                 <h3 class="category-title">{{ category.name }}</h3>
                 {% if category.description %}
                 <p class="category-description">{{ category.description }}</p>
