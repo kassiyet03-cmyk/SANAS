@@ -15,11 +15,6 @@ class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название категории")
     slug = models.SlugField(max_length=100, unique=True, verbose_name="URL-адрес")
     description = models.TextField(blank=True, verbose_name="Описание")
-    image = models.ImageField(
-        upload_to='categories/',
-        blank=True,
-        verbose_name="Изображение категории"
-    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
