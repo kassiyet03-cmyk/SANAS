@@ -1,0 +1,100 @@
+{% extends 'panel/base.html' %}
+
+{% block title %}{% if item %}Редактировать{% else %}Добавить{% endif %} товар{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{% if item %}Редактировать товар{% else %}Добавить новый товар{% endif %}</h1>
+    <p>{% if item %}Измените информацию о товаре{% else %}Заполните информацию о новом товаре{% endif %}</p>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="card">
+        <h3 class="card-title" style="margin-bottom: 20px;">Основная информация</h3>
+
+        <div class="form-group">
+            <label for="title">Название товара *</label>
+            <input type="text" name="title" id="title" class="form-control" required value="{% if item %}{{ item.title }}{% endif %}">
+            <small>Название будет отображаться на сайте</small>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Категория *</label>
+            <select name="category" id="category" class="form-control" required>
+                <option value="">Выберите категорию</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if item and item.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title" style="margin-bottom: 20px;">Описание</h3>
+
+        <div class="form-group">
+            <label for="short_description">Краткое описание</label>
+            <textarea name="short_description" id="short_description" class="form-control" rows="3">{% if item %}{{ item.short_description }}{% endif %}</textarea>
+            <small>1-2 предложения для карточки товара</small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Полное описание</label>
+            <textarea name="description" id="description" class="form-control" rows="8">{% if item %}{{ item.description }}{% endif %}</textarea>
+            <small>Подробное описание с характеристиками</small>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title" style="margin-bottom: 20px;">Изображение</h3>
+
+        {% if item and item.main_image %}
+        <div style="margin-bottom: 15px;">
+            <p style="margin-bottom: 8px; color: #6b7280; font-size: 0.9rem;">Текущее изображение:</p>
+            <img src="{{ item.main_image.url }}" style="max-width: 200px; border-radius: 8px;">
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="main_image">{% if item and item.main_image %}Заменить изображение{% else %}Загрузить изображение{% endif %}</label>
+            <input type="file" name="main_image" id="main_image" class="form-control" accept="image/*">
+            <small>Рекомендуемый размер: 800x600 пикселей</small>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title" style="margin-bottom: 20px;">Настройки</h3>
+
+        <div class="form-group">
+            <label for="price">Цена (тенге)</label>
+            <input type="number" name="price" id="price" class="form-control" step="0.01" value="{% if item.price %}{{ item.price }}{% endif %}">
+            <small>Оставьте пустым, если цена по запросу</small>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Статус публикации</label>
+            <select name="status" id="status" class="form-control">
+                <option value="draft" {% if item and item.status == 'draft' %}selected{% endif %}>Черновик (не видно на сайте)</option>
+                <option value="published" {% if item and item.status == 'published' %}selected{% endif %}>Опубликовано (видно всем)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" name="featured" id="featured" {% if item and item.featured %}checked{% endif %}>
+                <label for="featured" style="margin-bottom: 0;">Показывать на главной странице</label>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            {% if item %}Сохранить изменения{% else %}Добавить товар{% endif %}
+        </button>
+        <a href="{% url 'panel_items' %}" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+{% endblock %}

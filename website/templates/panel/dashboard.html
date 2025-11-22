@@ -1,0 +1,82 @@
+{% extends 'panel/base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Добро пожаловать!</h1>
+    <p>Управляйте товарами и категориями вашего сайта</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>{{ items_count }}</h3>
+        <p>Всего товаров</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ published_count }}</h3>
+        <p>Опубликовано</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ categories_count }}</h3>
+        <p>Категорий</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Быстрые действия</h3>
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="{% url 'panel_item_add' %}" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Добавить товар
+        </a>
+        <a href="{% url 'panel_items' %}" class="btn btn-secondary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            Все товары
+        </a>
+        <a href="{% url 'panel_categories' %}" class="btn btn-secondary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+            Категории
+        </a>
+    </div>
+</div>
+
+{% if recent_items %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Последние добавленные товары</h3>
+        <a href="{% url 'panel_items' %}" class="btn btn-sm btn-secondary">Все товары</a>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recent_items %}
+                <tr>
+                    <td><a href="{% url 'panel_item_edit' item.id %}">{{ item.title }}</a></td>
+                    <td>{{ item.category.name }}</td>
+                    <td>
+                        {% if item.status == 'published' %}
+                            <span class="badge badge-success">Опубликован</span>
+                        {% else %}
+                            <span class="badge badge-warning">Черновик</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.created_at|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,9 +1,17 @@
 from django.db import models
+from django.db.models import Count
 from django.utils import timezone
+
+
+class CategoryManager(models.Manager):
+    def annotate_item_count(self):
+        return self.annotate(item_count=Count('items'))
 
 
 class Category(models.Model):
     """Category for organizing items"""
+    objects = CategoryManager()
+
     name = models.CharField(max_length=100, verbose_name="Название категории")
     slug = models.SlugField(max_length=100, unique=True, verbose_name="URL-адрес")
     description = models.TextField(blank=True, verbose_name="Описание")

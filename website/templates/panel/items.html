@@ -1,0 +1,106 @@
+{% extends 'panel/base.html' %}
+
+{% block title %}Товары{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Товары</h1>
+    <p>Управление каталогом товаров</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="filter-bar">
+            <form method="get" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" name="search" class="form-control" placeholder="Поиск..." value="{{ request.GET.search }}">
+                <select name="category" class="form-control" onchange="this.form.submit()">
+                    <option value="">Все категории</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <a href="{% url 'panel_item_add' %}" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Добавить товар
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Фото</th>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Статус</th>
+                    <th>На главной</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        {% if item.main_image %}
+                            <img src="{{ item.main_image.url }}" alt="{{ item.title }}" class="image-preview">
+                        {% else %}
+                            <span style="color: #9ca3af;">Нет фото</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ item.title }}</strong></td>
+                    <td>{{ item.category.name }}</td>
+                    <td>
+                        {% if item.status == 'published' %}
+                            <span class="badge badge-success">Опубликован</span>
+                        {% else %}
+                            <span class="badge badge-warning">Черновик</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.featured %}
+                            <span style="color: #0d9488;">Да</span>
+                        {% else %}
+                            <span style="color: #9ca3af;">Нет</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <a href="{% url 'panel_item_edit' item.id %}" class="btn btn-sm btn-secondary">Изменить</a>
+                            <a href="{% url 'panel_item_delete' item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Удалить товар «{{ item.title }}»?')">Удалить</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
+                        Товары не найдены. <a href="{% url 'panel_item_add' %}">Добавить первый товар</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if items.has_other_pages %}
+    <div class="pagination">
+        {% if items.has_previous %}
+            <a href="?page={{ items.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Назад</a>
+        {% endif %}
+
+        {% for num in items.paginator.page_range %}
+            {% if items.number == num %}
+                <span class="current">{{ num }}</span>
+            {% elif num > items.number|add:'-3' and num < items.number|add:'3' %}
+                <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if items.has_next %}
+            <a href="?page={{ items.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Далее</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
