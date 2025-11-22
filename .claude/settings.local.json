@@ -8,7 +8,10 @@
       "Bash(copy:*)",
       "Bash(python manage.py migrate:*)",
       "Bash(python manage.py check:*)",
-      "Bash(python manage.py:*)"
+      "Bash(python manage.py:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []
